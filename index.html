@@ -39,7 +39,7 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
 
-        <article id="intro">
+        <article id="intro" class="exclude">
           <p>UCCASS is a web-based survey script written in PHP, UCCASS is used to make online surveys, polls, and questionnaires.</p>
         </article>
         
@@ -2030,8 +2030,26 @@ Cc: webmaster@example.org</pre>
   <script src="//code.jquery.com/jquery.min.js"></script>
   <script>
   jQuery(document).ready(function($){
-  
+
+    generateTOC( $( '#main_content' ) , '' , '' );
+
   });
+  function generateTOC( $element , key , prefix ){
+    var returnValue = new Array();
+    $element.children('article:not(.exclude)').each(function(k,v){
+      var $v = $(v) ,
+          text = $v.children('h1,h2,h3,h4,h5,h6').first().text() ,
+          link = '#'+$v[0].id ,
+          pref = ( prefix ? prefix + '.' : '' ) + ( k+1 ) ,
+          $obj = $('<a/>',{href:link}).text( pref + ' ' + text );
+      returnValue.push($obj);
+      if( $('article', $v).length ){
+        // Nested Articles Detected
+        returnValue.push( generateTOC( $v , k , pref ) );
+      }
+    });
+    return returnValue;
+  }
   </script>
   </body>
 </html>
